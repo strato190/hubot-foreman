@@ -2,15 +2,7 @@
 
 A hubot script for interaction with foreman api
 
-
-# Commands:
-
-```
-foreman s|search <pattern> - search and list of hosts and their last reports
-foreman c|classes <fqdn>  - show puppet classes assigned to host
-```
-
-
+See [`src/foreman.coffee`](src/foreman.coffee) for full documentation.
 
 
 ## Sample Interaction

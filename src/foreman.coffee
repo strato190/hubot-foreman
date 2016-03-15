@@ -18,6 +18,7 @@
 #
 foreman_url = process.env.FOREMAN_URL
 foreman_auth = process.env.FOREMAN_AUTH
+foreman_api_version = `process.env.FOREMAN_API ? process.env.FOREMAN_API : "1.1"`
 
 module.exports = (robot) ->
 
@@ -43,13 +44,22 @@ foremansearch = (msg, query, cb) ->
         console.log(res, uri, port, foreman_url, 'err', res.statusCode)
        i = 0
        body = JSON.parse(data)
-       while i < body.length
-         object = body[i]
-         for property of object
-           response += "#{i + 1}. #{object[property]['name']}  id: #{object[property]['id']}\n"
-           response += "#{process.env.FOREMAN_URL}/hosts/#{object[property]['name']}\n"
-           response += "#{process.env.FOREMAN_URL}/hosts/#{object[property]['name']}/reports/last\n"
-         i++
+       switch foreman_api_version
+         when "1.1"
+           while i < body["results"].length
+             object = body["results"][i]
+             response += "#{i + 1}. #{object['name']}  id: #{object['id']}\n"
+             response += "#{process.env.FOREMAN_URL}/hosts/#{object['name']}\n"
+             response += "#{process.env.FOREMAN_URL}/hosts/#{object['name']}/reports/last\n"
+             i++
+         else
+           while i < body.length
+             object = body[i]
+             for property of object
+               response += "#{i + 1}. #{object[property]['name']}  id: #{object[property]['id']}\n"
+               response += "#{process.env.FOREMAN_URL}/hosts/#{object[property]['name']}\n"
+               response += "#{process.env.FOREMAN_URL}/hosts/#{object[property]['name']}/reports/last\n"
+             i++
        msg.send response
 
 foremanpuppetclasses = (msg) ->
